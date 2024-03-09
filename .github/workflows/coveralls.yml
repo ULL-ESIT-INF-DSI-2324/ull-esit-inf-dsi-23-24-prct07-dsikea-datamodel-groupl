@@ -7,7 +7,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
+  coveralls:
 
     runs-on: ubuntu-latest
 
