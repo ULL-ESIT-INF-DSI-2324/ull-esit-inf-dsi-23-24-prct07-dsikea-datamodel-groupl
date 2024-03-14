@@ -28,6 +28,7 @@
     "typescript": "^5.4.2"
   },
   "dependencies": {
-    "inquirer": "^8.2.6"
+    "inquirer": "^8.2.6",
+    "lowdb": "^7.0.1"
   }
 }
