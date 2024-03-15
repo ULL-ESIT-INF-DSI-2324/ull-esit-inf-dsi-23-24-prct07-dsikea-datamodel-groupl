@@ -3,10 +3,10 @@
 ## Información de grupo
 
 Mariam Laaroussi Ramos
-alu...
+alu0101441764@ull.edu.es
 
 Lorenzo Román Luca De Tena
-alu...
+alu0101314990@ull.edu.es
 
 Idaira Reina González
 alu0101398495@ull.edu.es
