@@ -94,7 +94,5 @@ export class CustomerCollection {
     addCustomer(customer: Customer): void {
       this.customers.push(customer);
     }
-  
-    // Otros métodos para manejar la colección de clientes...
 }
   
