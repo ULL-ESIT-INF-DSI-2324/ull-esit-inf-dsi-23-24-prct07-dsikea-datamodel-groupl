@@ -38,7 +38,7 @@ export class Stock {
 
     private iniciarBaseDatos() {
     // Cargar datos iniciales de la base de datos desde el archivo JSON
-    const adaptador = new FileSync('base_datos.json');
+    const adaptador = new FileSync('stock.json');
     const db = low(adaptador);
 
     // Obtener datos de muebles, proveedores y clientes del archivo JSON
@@ -88,6 +88,31 @@ export class Stock {
     registrarVenta(fecha: Date, items: { mueble: Furniture; cantidad: number }[]): void {
         this.transacciones.push({ fecha, tipo: 'venta', items });
     }
+
+    listarClientes(): void {
+        const clientes = this.coleccionClientes.getCustomers();
+        if (clientes.length === 0) {
+            console.log('No hay clientes registrados.');
+        } else {
+            console.log('Lista de clientes:');
+            clientes.forEach(cliente => {
+                console.log(`ID: ${cliente.getId()}, Nombre: ${cliente.getName()}, Correo electrónico: ${cliente.getContact()}, Dirección: ${cliente.getAddress()}`);
+            });
+        }
+    }
+
+    listarMuebles(): void {
+        const muebles = this.coleccionMuebles.getFurnitureList();
+        if (muebles.length === 0) {
+            console.log('No hay muebles registrados.');
+        } else {
+            console.log('Lista de muebles:');
+            muebles.forEach(mueble => {
+                console.log(`ID: ${mueble.getId()}, Nombre: ${mueble.getName()}, Descripción: ${mueble.getDescription()}, Material: ${mueble.getMaterial()}, Dimensiones: ${mueble.getDimensions()}, Precio: ${mueble.getPrice()}`);
+            });
+        }
+    }
+
 
     obtenerStock(mueble: Furniture): number {
         const compras = this.transacciones.filter(

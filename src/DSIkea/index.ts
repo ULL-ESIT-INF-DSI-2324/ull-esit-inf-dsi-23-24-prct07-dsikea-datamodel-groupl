@@ -55,7 +55,6 @@ function manageFurniture() {
                     { type: 'input', name: 'dimensions', message: 'Dimensiones del mueble:' },
                     { type: 'input', name: 'price', message: 'Precio del mueble:' }
                 ]).then((newFurniture) => {
-                    stock.agregarMueble(newFurniture);
                     furnitureManager.addFurniture(newFurniture);
                     manageFurniture(); // Volver al menú de muebles
                 });
@@ -191,7 +190,8 @@ function manageCustomers() {
                 });
                 break;
             case 'Listar clientes':
-                customerManager.listCustomers();
+                //customerManager.listCustomers();
+                stock.listarClientes();
                 manageCustomers();
                 break;
             case 'Buscar cliente':
