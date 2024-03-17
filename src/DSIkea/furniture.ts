@@ -121,16 +121,19 @@ export class Furniture {
 * Clase para manejar la colección de muebles.
 */
 export class FurnitureCollection {
-    private furnitures: Furniture[] = [];
-  
-    /**
-     * Agrega un mueble a la colección.
-     * @param furniture El mueble a agregar.
-     */
-    addFurniture(furniture: Furniture): void {
+  private furnitures: Furniture[] = [];
+
+  findIndexById(id: string): number {
+      return this.furnitures.findIndex(furniture => furniture.getId() === id);
+  }
+
+  addFurniture(furniture: Furniture): void {
       this.furnitures.push(furniture);
-    }
-  
+  }
+
+  getFurnitureList(): Furniture[] {
+      return this.furnitures;
+  }
 }
 
 /**
