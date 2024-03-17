@@ -1,5 +1,70 @@
 {
-  "posts": [
-    { "id": 1, "title": "aprendiendo lowdb", "views": 100 }
+  "furniture": [
+    {
+      "type": "sofa",
+      "id": "f1",
+      "name": "Sofá de Cuero Negro",
+      "description": "Sofá de cuero negro elegante para sala de estar.",
+      "material": "Cuero",
+      "dimensions": "220x100x80 cm",
+      "price": 1500
+    },
+    {
+      "type": "mesa_comedor",
+      "id": "f2",
+      "name": "Mesa de Comedor de Madera",
+      "description": "Mesa de comedor de madera maciza con capacidad para 6 personas.",
+      "material": "Madera",
+      "dimensions": "180x90x75 cm",
+      "price": 900
+    },
+    {
+      "type": "escritorio",
+      "id": "f20",
+      "name": "Escritorio Moderno",
+      "description": "Escritorio moderno con espacio de almacenamiento y diseño ergonómico.",
+      "material": "Madera y metal",
+      "dimensions": "120x60x75 cm",
+      "price": 350
+    }
+  ],
+  "providers": [
+    {
+      "id": "p1",
+      "name": "Muebles Hispania",
+      "contact": "info@muebles-hispania.com",
+      "address": "Calle Mayor 123, Madrid"
+    },
+    {
+      "id": "p2",
+      "name": "Decoraciones Modernas",
+      "contact": "contacto@decoracionesmodernas.com",
+      "address": "Avenida Diagonal 456, Barcelona"
+    },
+    {
+      "id": "p10",
+      "name": "Muebles Elegantes",
+      "contact": "info@muebleselegantes.com",
+      "address": "Calle Valencia 789, Valencia"
+    }
+  ],
+  "customers": [
+    {
+      "id": "c1",
+      "name": "Ana García",
+      "contact": "ana.garcia@example.com",
+      "address": "Calle Alameda 12, Sevilla"
+    },
+    {
+      "id": "c2",
+      "name": "Javier Martínez",
+      "contact": "javier.martinez@example.com",
+      "address": "Avenida Libertad 45, Madrid"
+    },
+    {
+      "id": "c10",
+      "name": "Elena Ruiz",
+      "contact": "elena.ruiz@example.com",
+      "address": "Calle Gran Vía 34, Barcelona"
+    }
   ]
-}
