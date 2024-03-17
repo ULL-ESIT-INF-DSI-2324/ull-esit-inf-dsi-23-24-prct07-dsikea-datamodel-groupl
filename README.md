@@ -488,8 +488,460 @@ export class FurnitureManager {
 
 La clase `FurnitureManager` proporciona una interfaz cohesiva y modular para gestionar una colección de muebles, siguiendo los principios SOLID para un diseño robusto y flexible.
 
+## `Supplier.ts`
 
+```
+/**
+ * Clase para representar un proveedor.
+ */
+export class Supplier {
+    /**
+     * Crea una instancia de Supplier.
+     * @param id El ID único del proveedor.
+     * @param name El nombre del proveedor.
+     * @param contact La información de contacto del proveedor.
+     * @param address La dirección del proveedor.
+     */
+    constructor(
+      private id: string,
+      private name: string,
+      private contact: string,
+      private address: string
+    ) {}
+  
+    /**
+     * Obtiene el ID del proveedor.
+     * @returns El ID del proveedor.
+     */
+    getId(): string {
+      return this.id;
+    }
+  
+    /**
+     * Establece el ID del proveedor.
+     * @param id El nuevo ID del proveedor.
+     */
+    setId(id: string): void {
+      this.id = id;
+    }
+  
+    /**
+     * Obtiene el nombre del proveedor.
+     * @returns El nombre del proveedor.
+     */
+    getName(): string {
+      return this.name;
+    }
+  
+    /**
+     * Establece el nombre del proveedor.
+     * @param name El nuevo nombre del proveedor.
+     */
+    setName(name: string): void {
+      this.name = name;
+    }
+  
+    /**
+     * Obtiene la información de contacto del proveedor.
+     * @returns La información de contacto del proveedor.
+     */
+    getContact(): string {
+      return this.contact;
+    }
+  
+    /**
+     * Establece la información de contacto del proveedor.
+     * @param contact La nueva información de contacto del proveedor.
+     */
+    setContact(contact: string): void {
+      this.contact = contact;
+    }
+  
+    /**
+     * Obtiene la dirección del proveedor.
+     * @returns La dirección del proveedor.
+     */
+    getAddress(): string {
+      return this.address;
+    }
+  
+    /**
+     * Establece la dirección del proveedor.
+     * @param address La nueva dirección del proveedor.
+     */
+    setAddress(address: string): void {
+      this.address = address;
+    }
+}
+  
+/**
+* Clase para manejar la colección de proveedores.
+*/
+export class SupplierCollection {
+    private suppliers: Supplier[] = [];
+  
+    /**
+     * Agrega un proveedor a la colección.
+     * @param supplier El proveedor a agregar.
+     */
+    addSupplier(supplier: Supplier): void {
+      this.suppliers.push(supplier);
+    }
 
+}
+```
+Supplier y SupplierCollection, se utilizan para representar proveedores y manejar una colección de proveedores, respectivamente.
+
+Clase Supplier:
+Esta clase representa un proveedor y tiene las siguientes propiedades y métodos:
+
+Propiedades:
+```
+id: ID único del proveedor (privado).
+name: Nombre del proveedor (privado).
+contact: Información de contacto del proveedor (privado).
+address: Dirección del proveedor (privado).
+```
+Constructor:
+
+Recibe como parámetros el ID, nombre, información de contacto y dirección del proveedor para inicializar las propiedades correspondientes al crear una instancia de Supplier.
+Métodos:
+```
+getId(): Obtiene el ID del proveedor.
+setId(id: string): Establece el ID del proveedor.
+getName(): Obtiene el nombre del proveedor.
+setName(name: string): Establece el nombre del proveedor.
+getContact(): Obtiene la información de contacto del proveedor.
+setContact(contact: string): Establece la información de contacto del proveedor.
+getAddress(): Obtiene la dirección del proveedor.
+setAddress(address: string): Establece la dirección del proveedor.
+Clase SupplierCollection:
+Esta clase se encarga de manejar una colección de proveedores y tiene la siguiente propiedad y método:
+```
+Propiedad:
+```
+suppliers: Arreglo de objetos Supplier que representa la colección de proveedores (privado).
+Método:
+
+addSupplier(supplier: Supplier): Agrega un proveedor a la colección suppliers.
+```
+## `supplierManager.ts`
+Importación de clases:
+```
+import { Supplier, SupplierCollection } from './supplier.js';
+```
+En esta línea, se importan las clases Supplier y SupplierCollection desde el archivo supplier.js. Estas clases representan un proveedor individual y la colección de proveedores, respectivamente.
+Clase SupplierManager:
+```
+export class SupplierManager {
+    private supplierCollection: SupplierCollection;
+
+    constructor() {
+        this.supplierCollection = new SupplierCollection();
+    }
+
+    // Métodos para agregar, actualizar, eliminar y buscar proveedores
+}
+```
+Esta clase representa un gestor de proveedores y tiene una propiedad privada supplierCollection que es una instancia de SupplierCollection. El constructor inicializa esta propiedad al crear una nueva instancia de SupplierCollection.
+Método addSupplier(supplier: Supplier): void:
+```
+addSupplier(supplier: Supplier): void {
+    this.supplierCollection.addSupplier(supplier);
+}
+
+```
+Este método recibe un objeto Supplier como parámetro y lo agrega a la colección de proveedores a través del método addSupplier de la propiedad supplierCollection.
+Método updateSupplier(id: string, updatedSupplier: Supplier): boolean:
+```
+    updateSupplier(id: string, updatedSupplier: Supplier): boolean {
+        const index = this.findIndexById(id);
+        if (index !== -1) {
+            const supplierList = this.supplierCollection['suppliers']; // Acceder directamente al array
+            supplierList[index] = updatedSupplier;
+            return true;
+        }
+        return false; // Proveedor no encontrado
+    }
+```
+Este método recibe el ID del proveedor a actualizar y un objeto Supplier actualizado. Busca el proveedor en la colección, lo actualiza si se encuentra y devuelve true, o devuelve false si no se encuentra el proveedor.
+Método deleteSupplier(id: string): boolean:
+```
+    deleteSupplier(id: string): boolean {
+        const index = this.findIndexById(id);
+        if (index !== -1) {
+            const supplierList = this.supplierCollection['suppliers']; // Acceder directamente al array
+            supplierList.splice(index, 1);
+            return true;
+        }
+        return false; // Proveedor no encontrado
+    }
+```
+Este método recibe el ID del proveedor a eliminar, busca el proveedor en la colección y lo elimina si se encuentra, devolviendo true. Devuelve false si no se encuentra el proveedor.
+Método findSupplierById(id: string): Supplier | null:
+```
+    findSupplierById(id: string): Supplier | null {
+        const index = this.findIndexById(id);
+        if (index !== -1) {
+            const supplierList = this.supplierCollection['suppliers']; // Acceder directamente al array
+            return supplierList[index];
+        }
+        return null; // Proveedor no encontrado
+    }
+```
+Este método recibe el ID del proveedor a buscar, busca el proveedor en la colección y lo devuelve si se encuentra. Devuelve null si no se encuentra el proveedor.
+Método findIndexById(id: string): number:
+```
+    private findIndexById(id: string): number {
+        const supplierList = this.supplierCollection['suppliers']; // Acceder directamente al array
+        return supplierList.findIndex(supplier => supplier.getId() === id);
+    }
+```
+Este método recibe el ID del proveedor a buscar, busca su índice en la colección y lo devuelve. Devuelve -1 si no se encuentra el proveedor.
+
+## `customer.ts`
+```
+/**
+ * Clase para representar un cliente.
+ */
+export class Customer {
+    /**
+     * Crea una instancia de Customer.
+     * @param id El ID único del cliente.
+     * @param name El nombre del cliente.
+     * @param contact La información de contacto del cliente.
+     * @param address La dirección del cliente.
+     */
+    constructor(
+      private id: string,
+      private name: string,
+      private contact: string,
+      private address: string
+    ) {}
+  
+    /**
+     * Obtiene el ID del cliente.
+     * @returns El ID del cliente.
+     */
+    getId(): string {
+      return this.id;
+    }
+  
+    /**
+     * Establece el ID del cliente.
+     * @param id El nuevo ID del cliente.
+     */
+    setId(id: string): void {
+      this.id = id;
+    }
+  
+    /**
+     * Obtiene el nombre del cliente.
+     * @returns El nombre del cliente.
+     */
+    getName(): string {
+      return this.name;
+    }
+  
+    /**
+     * Establece el nombre del cliente.
+     * @param name El nuevo nombre del cliente.
+     */
+    setName(name: string): void {
+      this.name = name;
+    }
+  
+    /**
+     * Obtiene la información de contacto del cliente.
+     * @returns La información de contacto del cliente.
+     */
+    getContact(): string {
+      return this.contact;
+    }
+  
+    /**
+     * Establece la información de contacto del cliente.
+     * @param contact La nueva información de contacto del cliente.
+     */
+    setContact(contact: string): void {
+      this.contact = contact;
+    }
+  
+    /**
+     * Obtiene la dirección del cliente.
+     * @returns La dirección del cliente.
+     */
+    getAddress(): string {
+      return this.address;
+    }
+  
+    /**
+     * Establece la dirección del cliente.
+     * @param address La nueva dirección del cliente.
+     */
+    setAddress(address: string): void {
+      this.address = address;
+    }
+}
+  
+/**
+* Clase para manejar la colección de clientes.
+*/
+export class CustomerCollection {
+    private customers: Customer[] = [];
+  
+    /**
+     * Agrega un cliente a la colección.
+     * @param customer El cliente a agregar.
+     */
+    addCustomer(customer: Customer): void {
+      this.customers.push(customer);
+    }
+
+    findIndexById(id: string): number {
+      return this.customers.findIndex(customer => customer.getId() === id);
+  }
+
+  /**
+   * Obtiene la lista de clientes.
+   * @returns La lista de clientes.
+   */
+  getCustomers(): Customer[] {
+      return this.customers;
+  }
+}
+```
+Customer y CustomerCollection, que se utilizan para representar clientes individuales y gestionar una colección de clientes, respectivamente.
+Clase Customer:
+Esta clase representa un cliente y tiene las siguientes propiedades y métodos:
+
+Propiedades:
+
+id: ID único del cliente (privado).
+name: Nombre del cliente (privado).
+contact: Información de contacto del cliente (privado).
+address: Dirección del cliente (privado).
+Constructor:
+
+Recibe como parámetros el ID, nombre, información de contacto y dirección del cliente para inicializar las propiedades correspondientes al crear una instancia de Customer.
+Métodos:
+
+getId(): Obtiene el ID del cliente.
+setId(id: string): Establece el ID del cliente.
+getName(): Obtiene el nombre del cliente.
+setName(name: string): Establece el nombre del cliente.
+getContact(): Obtiene la información de contacto del cliente.
+setContact(contact: string): Establece la información de contacto del cliente.
+getAddress(): Obtiene la dirección del cliente.
+setAddress(address: string): Establece la dirección del cliente.
+Clase CustomerCollection:
+Esta clase se encarga de manejar una colección de clientes y tiene la siguiente propiedad y método:
+
+Propiedad:
+
+customers: Arreglo de objetos Customer que representa la colección de clientes (privado).
+Métodos:
+
+addCustomer(customer: Customer): void: Agrega un cliente a la colección customers.
+findIndexById(id: string): number: Busca el índice de un cliente por su ID en la colección.
+getCustomers(): Customer[]: Obtiene la lista de todos los clientes en la colección.
+
+## `customerManager.ts`
+Esto se encarga de gestionar la colección de clientes a través de métodos para agregar, actualizar, eliminar, buscar y listar clientes.
+Importación de clases:
+```
+import { Customer, CustomerCollection } from './customer.js';
+```
+En esta línea, se importan las clases Customer y CustomerCollection desde el archivo customer.js, las cuales representan un cliente individual y la colección de clientes, respectivamente.
+Clase CustomerManager:
+```
+export class CustomerManager {
+    private customerCollection: CustomerCollection;
+
+    constructor() {
+        this.customerCollection = new CustomerCollection();
+    }
+
+    // Métodos para agregar, actualizar, eliminar, buscar y listar clientes
+}
+```
+Esta clase representa un gestor de clientes y tiene una propiedad privada customerCollection que es una instancia de CustomerCollection. El constructor inicializa esta propiedad al crear una nueva instancia de CustomerCollection.
+Método generateUniqueId(): string:
+```
+    generateUniqueId(): string{
+        // Generar un timestamp para asegurar que los IDs sean únicos
+        const timestamp = new Date().getTime();
+
+        // Generar un número aleatorio entre 0 y 99999
+        const random = Math.floor(Math.random() * 100000);
+
+        // Concatenar el timestamp y el número aleatorio para formar el ID
+        return `${timestamp}${random}`;
+    }
+```
+Este método genera un ID único combinando un timestamp (marca de tiempo) y un número aleatorio. Esto asegura que los IDs sean únicos para cada cliente.
+Método findCustomer(id: string): Customer | null:
+```
+    findCustomer(id: string): Customer | null {
+        const index = this.customerCollection.findIndexById(id);
+        if (index !== -1) {
+            const customerList = this.customerCollection.getCustomers();
+            return customerList[index];
+        }
+        return null; // Cliente no encontrado
+    }
+```
+Este método recibe el ID del cliente a buscar, busca el cliente en la colección y lo devuelve si se encuentra. Devuelve null si no se encuentra el cliente.
+Método deleteCustomer(id: string): boolean:
+```
+        deleteCustomer(id: string): boolean {
+            const index = this.customerCollection.findIndexById(id);
+            if (index !== -1) {
+                const customerList = this.customerCollection.getCustomers();
+                customerList.splice(index, 1);
+                return true;
+            }
+            return false; // Cliente no encontrado
+        }
+```
+Este método recibe el ID del cliente a eliminar, busca el cliente en la colección y lo elimina si se encuentra, devolviendo true. Devuelve false si no se encuentra el cliente.
+Método updateCustomer(id: string, updatedCustomer: Customer): boolean:
+```
+    updateCustomer(id: string, updatedCustomer: Customer): boolean {
+        const index = this.customerCollection.findIndexById(id);
+        if (index !== -1) {
+            const customerList = this.customerCollection.getCustomers();
+            customerList[index] = updatedCustomer;
+            return true;
+        }
+        return false; // Cliente no encontrado
+    }
+```
+Este método recibe el ID del cliente a actualizar y un objeto Customer actualizado. Busca el cliente en la colección, lo actualiza si se encuentra y devuelve true, o devuelve false si no se encuentra el cliente.
+Método addCustomer(customerData: { name: string, email: string }): void:
+```
+    addCustomer(customerData: { name: string, email: string }): void {
+        const id = this.generateUniqueId();
+        const newCustomer = new Customer(id, customerData.name, customerData.email, ''); // Crear una instancia de Customer con ID generado, nombre, correo electrónico y dirección vacía
+        console.log(id);
+        this.customerCollection.addCustomer(newCustomer); // Agregar la nueva instancia de Customer a la colección
+    }
+```
+Este método recibe los datos del cliente (nombre y correo electrónico), genera un ID único usando generateUniqueId(), crea una nueva instancia de Customer con esos datos y el ID generado, y luego agrega el cliente a la colección.
+Método listCustomers(): void:
+```
+    listCustomers(): void {
+        const customers = this.customerCollection.getCustomers();
+        if (customers.length === 0) {
+            console.log('No hay clientes registrados.');
+        } else {
+            console.log('Lista de clientes:');
+            customers.forEach(customer => {
+                console.log(`ID: ${customer.getId()}, Nombre: ${customer.getName()}, Correo electrónico: ${customer.getContact()}, Dirección: ${customer.getAddress()}`);
+            });
+        }
+```
+Este método obtiene la lista de todos los clientes en la colección y muestra su información por consola, incluyendo ID, nombre, correo electrónico y dirección.
 
 
 
