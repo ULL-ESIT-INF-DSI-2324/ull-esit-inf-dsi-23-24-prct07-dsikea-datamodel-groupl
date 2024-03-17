@@ -6,7 +6,7 @@ import FileSync from 'lowdb/adapters/FileSync.js';
 
 export interface Transaccion {
     fecha: Date;
-    tipo: 'compra' | 'venta' | 'devolucion';
+    tipo: 'compra' | 'venta' | 'devolucion' | 'manual'; // Agrega 'manual' a la unión de tipos
     items: {
         mueble: Furniture;
         cantidad: number;
@@ -41,50 +41,112 @@ export class Stock {
         // Cargar muebles, proveedores, clientes y transacciones
     }
 
-    // Agregar un nuevo mueble a la coleccion
     agregarMueble(mueble: Furniture): void {
         this.coleccionMuebles.addFurniture(mueble);
     }
 
-    // Agregar un nuevo proveedor a la coleccion
     agregarProveedor(proveedor: Supplier): void {
         this.coleccionProveedores.addSupplier(proveedor);
     }
 
-    // Agregar un nuevo cliente a la coleccion
     agregarCliente(cliente: Customer): void {
         this.coleccionClientes.addCustomer(cliente);
     }
 
-    // Registrar una transaccion de compra
     registrarCompra(fecha: Date, items: { mueble: Furniture; cantidad: number }[]): void {
         this.transacciones.push({ fecha, tipo: 'compra', items });
     }
 
-    // Registrar una transaccion de venta
     registrarVenta(fecha: Date, items: { mueble: Furniture; cantidad: number }[]): void {
         this.transacciones.push({ fecha, tipo: 'venta', items });
     }
 
-    // Obtener el stock disponible de un mueble específico
     obtenerStock(mueble: Furniture): number {
-        // Calcular stock basado en transacciones
+        const compras = this.transacciones.filter(
+            transaccion => transaccion.tipo === 'compra' && transaccion.items.some(item => item.mueble === mueble)
+        );
+        const ventas = this.transacciones.filter(
+            transaccion => transaccion.tipo === 'venta' && transaccion.items.some(item => item.mueble === mueble)
+        );
+        const stockCompras = compras.reduce((total, compra) => {
+            return total + compra.items.filter(item => item.mueble === mueble).reduce((subTotal, item) => subTotal + item.cantidad, 0);
+        }, 0);
+        const stockVentas = ventas.reduce((total, venta) => {
+            return total + venta.items.filter(item => item.mueble === mueble).reduce((subTotal, item) => subTotal + item.cantidad, 0);
+        }, 0);
+        return stockCompras - stockVentas;
     }
 
-    // Obtener el total de ventas dentro de un rango de fechas
     obtenerInformeVentas(informe: Informe): number {
-        // Calcular total de ventas dentro del rango de fechas especificado
+        const ventas = this.transacciones.filter(
+            transaccion => transaccion.tipo === 'venta' && transaccion.fecha >= informe.rangoFechas.inicio && transaccion.fecha <= informe.rangoFechas.fin
+        );
+        const totalVentas = ventas.reduce((total, venta) => {
+            return total + venta.items.reduce((subtotal, item) => subtotal + item.cantidad, 0);
+        }, 0);
+        return totalVentas;
     }
 
-    // Obtener el total de compras dentro de un rango de fechas
     obtenerInformeCompras(informe: Informe): number {
-        // Calcular total de compras dentro del rango de fechas especificado
+        const compras = this.transacciones.filter(
+            transaccion => transaccion.tipo === 'compra' && transaccion.fecha >= informe.rangoFechas.inicio && transaccion.fecha <= informe.rangoFechas.fin
+        );
+        const totalCompras = compras.reduce((total, compra) => {
+            return total + compra.items.reduce((subtotal, item) => subtotal + item.cantidad, 0);
+        }, 0);
+        return totalCompras;
     }
 
-    // Obtener el informe de stock para un mueble específico o categoría
-    obtenerInformeStock(mueble?: Furniture, categoría?: string): number {
-        // Generar informe de stock para el mueble o categoría especificados
+    obtenerInformeStock(mueble?: Furniture): number {
+        let stockTotal = 0;
+        if (mueble) {
+            stockTotal = this.obtenerStock(mueble);
+        }
+        // Puedes implementar lógica para obtener stock por categoría aquí si es necesario
+        return stockTotal;
+    }
+    
+
+    generarInformeStockMinimo(stockMinimo: number): Furniture[] {
+        const mueblesBajosStock: Furniture[] = [];
+        // Obtener la lista de muebles de la colección
+        const muebles = this.coleccionMuebles.getFurnitureList();
+        // Recorrer los muebles para verificar el stock
+        muebles.forEach(mueble => {
+            if (this.obtenerStock(mueble) <= stockMinimo) {
+                mueblesBajosStock.push(mueble);
+            }
+        });
+        return mueblesBajosStock;
+    }
+    
+
+    registrarDevolucion(fecha: Date, items: { mueble: Furniture; cantidad: number }[]): void {
+        this.transacciones.push({ fecha, tipo: 'devolucion', items });
     }
 
-    // Otros métodos para generar informes, gestionar stock, etc.
+    obtenerInformeTransaccionesPorTipo(tipo: 'compra' | 'venta' | 'devolucion'): Transaccion[] {
+        return this.transacciones.filter(transaccion => transaccion.tipo === tipo);
+    }
+
+    actualizarStockManual(mueble: Furniture, cantidad: number): void {
+        const index = this.transacciones.findIndex(
+            transaccion => transaccion.tipo === 'manual' && transaccion.items.some(item => item.mueble === mueble)
+        );
+        if (index !== -1) {
+            this.transacciones[index].items.forEach(item => {
+                if (item.mueble === mueble) {
+                    item.cantidad += cantidad;
+                }
+            });
+        } else {
+            // Crear una nueva transacción de tipo 'manual' si no existe
+            const nuevaTransaccion: Transaccion = {
+                fecha: new Date(),
+                tipo: 'manual',
+                items: [{ mueble, cantidad }],
+            };
+            this.transacciones.push(nuevaTransaccion);
+        }
+    }
 }
