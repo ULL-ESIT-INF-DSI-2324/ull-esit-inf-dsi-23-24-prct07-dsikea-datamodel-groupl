@@ -74,4 +74,12 @@ export class FurnitureManager {
     private findIndexById(id: string): number {
         return this.furnitureCollection.findIndexById(id);
     }
+
+        /**
+     * Obtiene una lista de todos los muebles.
+     * @returns La lista de muebles.
+     */
+        getFurnitureList(): Furniture[] {
+            return this.furnitureCollection.getFurnitureList();
+        }
 }

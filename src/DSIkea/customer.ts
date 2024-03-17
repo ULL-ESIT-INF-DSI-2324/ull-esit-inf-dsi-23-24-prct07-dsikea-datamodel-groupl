@@ -94,5 +94,17 @@ export class CustomerCollection {
     addCustomer(customer: Customer): void {
       this.customers.push(customer);
     }
+
+    findIndexById(id: string): number {
+      return this.customers.findIndex(customer => customer.getId() === id);
+  }
+
+  /**
+   * Obtiene la lista de clientes.
+   * @returns La lista de clientes.
+   */
+  getCustomers(): Customer[] {
+      return this.customers;
+  }
 }
   

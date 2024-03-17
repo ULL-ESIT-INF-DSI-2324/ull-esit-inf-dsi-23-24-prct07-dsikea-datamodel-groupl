@@ -2,12 +2,13 @@ import inquirer from 'inquirer';
 import { FurnitureManager } from './furnitureManager.js';
 import { SupplierManager } from './supplierManager.js';
 import { CustomerManager } from './customerManager.js';
+import { Stock } from './stock.js';
 
 // Crear instancias de los managers
 const furnitureManager = new FurnitureManager();
 const supplierManager = new SupplierManager();
 const customerManager = new CustomerManager();
-
+const stock = new Stock();
 // Función principal para mostrar el menú y manejar las opciones
 function mainMenu() {
     inquirer.prompt({
@@ -49,8 +50,12 @@ function manageFurniture() {
                 // Lógica para agregar un mueble
                 inquirer.prompt([
                     { type: 'input', name: 'name', message: 'Nombre del mueble:' },
+                    { type: 'input', name: 'description', message: 'Descripción del mueble:' },
+                    { type: 'input', name: 'material', message: 'Material del mueble:' },
+                    { type: 'input', name: 'dimensions', message: 'Dimensiones del mueble:' },
                     { type: 'input', name: 'price', message: 'Precio del mueble:' }
                 ]).then((newFurniture) => {
+                    stock.agregarMueble(newFurniture);
                     furnitureManager.addFurniture(newFurniture);
                     manageFurniture(); // Volver al menú de muebles
                 });
@@ -60,9 +65,12 @@ function manageFurniture() {
                 inquirer.prompt([
                     { type: 'input', name: 'id', message: 'ID del mueble a actualizar:' },
                     { type: 'input', name: 'name', message: 'Nuevo nombre del mueble:' },
+                    { type: 'input', name: 'description', message: 'Nueva descripción del mueble:' },
+                    { type: 'input', name: 'material', message: 'Nuevo material del mueble:' },
+                    { type: 'input', name: 'dimensions', message: 'Nuevas dimensiones del mueble:' },
                     { type: 'input', name: 'price', message: 'Nuevo precio del mueble:' }
                 ]).then((updatedFurniture) => {
-                    furnitureManager.updateFurniture(updatedFurniture);
+                    furnitureManager.updateFurniture(updatedFurniture.id, updatedFurniture);
                     manageFurniture(); // Volver al menú de muebles
                 });
                 break;
@@ -76,13 +84,13 @@ function manageFurniture() {
             case 'Buscar mueble':
                 // Lógica para buscar un mueble
                 inquirer.prompt({ type: 'input', name: 'id', message: 'ID del mueble a buscar:' }).then((answer) => {
-                    furnitureManager.findFurniture(answer.id);
+                    furnitureManager.findFurnitureById(answer.id);
                     manageFurniture(); // Volver al menú de muebles
                 });
                 break;
             case 'Listar muebles':
                 // Lógica para listar todos los muebles
-                furnitureManager.listFurniture();
+                furnitureManager.getFurnitureList();
                 manageFurniture(); // Volver al menú de muebles
                 break;
             case 'Volver':
@@ -119,7 +127,7 @@ function manageSuppliers() {
                     { type: 'input', name: 'name', message: 'Nuevo nombre del proveedor:' },
                     { type: 'input', name: 'contact', message: 'Nuevo contacto del proveedor:' }
                 ]).then((updatedSupplier) => {
-                    supplierManager.updateSupplier(updatedSupplier);
+                    supplierManager.updateSupplier(updatedSupplier.id, updatedSupplier);
                     manageSuppliers(); // Volver al menú de proveedores
                 });
                 break;
@@ -133,7 +141,7 @@ function manageSuppliers() {
             case 'Buscar proveedor':
                 // Lógica para buscar un proveedor
                 inquirer.prompt({ type: 'input', name: 'id', message: 'ID del proveedor a buscar:' }).then((answer) => {
-                    supplierManager.findSupplier(answer.id);
+                    supplierManager.findSupplierById(answer.id);
                     manageSuppliers(); // Volver al menú de proveedores
                 });
                 break;
@@ -149,7 +157,7 @@ function manageCustomers() {
         type: 'list',
         name: 'customerOption',
         message: 'Seleccione una opción para gestionar clientes:',
-        choices: ['Agregar cliente', 'Actualizar cliente', 'Eliminar cliente', 'Buscar cliente', 'Volver']
+        choices: ['Agregar cliente', 'Actualizar cliente', 'Eliminar cliente', 'Buscar cliente', 'Listar clientes', 'Volver']
     }).then((answers) => {
         const { customerOption } = answers;
 
@@ -159,8 +167,8 @@ function manageCustomers() {
                 inquirer.prompt([
                     { type: 'input', name: 'name', message: 'Nombre del cliente:' },
                     { type: 'input', name: 'email', message: 'Correo electrónico del cliente:' }
-                ]).then((newCustomer) => {
-                    customerManager.addCustomer(newCustomer);
+                ]).then((answers) => {
+                    customerManager.addCustomer(answers); // Llamar a la función addCustomer con la nueva instancia de Customer
                     manageCustomers(); // Volver al menú de clientes
                 });
                 break;
@@ -171,7 +179,7 @@ function manageCustomers() {
                     { type: 'input', name: 'name', message: 'Nuevo nombre del cliente:' },
                     { type: 'input', name: 'email', message: 'Nuevo correo electrónico del cliente:' }
                 ]).then((updatedCustomer) => {
-                    customerManager.updateCustomer(updatedCustomer);
+                    customerManager.updateCustomer(updatedCustomer.id, updatedCustomer);
                     manageCustomers(); // Volver al menú de clientes
                 });
                 break;
@@ -181,6 +189,10 @@ function manageCustomers() {
                     customerManager.deleteCustomer(answer.id);
                     manageCustomers(); // Volver al menú de clientes
                 });
+                break;
+            case 'Listar clientes':
+                customerManager.listCustomers();
+                manageCustomers();
                 break;
             case 'Buscar cliente':
                 // Lógica para buscar un cliente

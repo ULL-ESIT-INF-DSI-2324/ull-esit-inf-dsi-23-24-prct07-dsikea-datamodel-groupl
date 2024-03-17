@@ -25,7 +25,7 @@ export class Stock {
     private transacciones: Transaccion[];
 
     constructor() {
-        const adaptador = new FileSync('base_datos.json');
+        const adaptador = new FileSync('stock.json');
         const db = low(adaptador);
 
         this.coleccionMuebles = new FurnitureCollection();
@@ -37,8 +37,32 @@ export class Stock {
     }
 
     private iniciarBaseDatos() {
-        // Cargar datos iniciales de la base de datos o crear nuevos datos si no existen
-        // Cargar muebles, proveedores, clientes y transacciones
+    // Cargar datos iniciales de la base de datos desde el archivo JSON
+    const adaptador = new FileSync('base_datos.json');
+    const db = low(adaptador);
+
+    // Obtener datos de muebles, proveedores y clientes del archivo JSON
+    const muebles = db.get('muebles').value() || [];
+    const proveedores = db.get('proveedores').value() || [];
+    const clientes = db.get('clientes').value() || [];
+
+    // Cargar muebles
+    muebles.forEach((mueble: any) => {
+        const nuevoMueble = new Furniture(mueble.id, mueble.name, mueble.description, mueble.material, mueble.dimensions, mueble.price);
+        this.agregarMueble(nuevoMueble);
+    });
+
+    // Cargar proveedores
+    proveedores.forEach((proveedor: any) => {
+        const nuevoProveedor = new Supplier(proveedor.id, proveedor.name, proveedor.contact, proveedor.address);
+        this.agregarProveedor(nuevoProveedor);
+    });
+
+    // Cargar clientes
+    clientes.forEach((cliente: any) => {
+        const nuevoCliente = new Customer(cliente.id, cliente.name, cliente.email, cliente.address);
+        this.agregarCliente(nuevoCliente);
+    });
     }
 
     agregarMueble(mueble: Furniture): void {
@@ -51,6 +75,10 @@ export class Stock {
 
     agregarCliente(cliente: Customer): void {
         this.coleccionClientes.addCustomer(cliente);
+    }
+
+    getColeccionClientes(){
+        return this.coleccionClientes;
     }
 
     registrarCompra(fecha: Date, items: { mueble: Furniture; cantidad: number }[]): void {
