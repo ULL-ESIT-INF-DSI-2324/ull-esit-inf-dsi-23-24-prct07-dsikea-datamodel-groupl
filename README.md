@@ -1500,3 +1500,7 @@ El uso de herramientas como lowdb para la gestión de bases de datos permite fam
 
 - Entendimiento del Proceso Comercial:
 Al simular la gestión de una tienda de muebles, se obtiene una comprensión más profunda del proceso comercial involucrado, incluyendo la interacción con proveedores, la gestión de inventario y la atención al cliente.
+
+# Bibliografía 
+- lowdb https://www.npmjs.com/package/lowdb
+- inquirer https://www.npmjs.com/package/inquirer
