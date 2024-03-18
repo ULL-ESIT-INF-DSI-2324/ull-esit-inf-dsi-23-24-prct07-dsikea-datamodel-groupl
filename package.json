@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "tsc-watch --onSuccess \"node dist/DSIkea/index.js\"",
-    "doc": "typedoc",
+    "doc": "typedoc --entryPoints 'src/**/*.ts'",
     "test": "mocha",
     "coverage": "c8 npm test && c8 report --reporter=lcov"
   },
