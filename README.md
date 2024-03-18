@@ -1502,5 +1502,8 @@ El uso de herramientas como lowdb para la gestión de bases de datos permite fam
 Al simular la gestión de una tienda de muebles, se obtiene una comprensión más profunda del proceso comercial involucrado, incluyendo la interacción con proveedores, la gestión de inventario y la atención al cliente.
 
 # Bibliografía 
-- lowdb https://www.npmjs.com/package/lowdb
-- inquirer https://www.npmjs.com/package/inquirer
+> npm: lowdb. (n.d.). Npm. https://www.npmjs.com/package/lowdb
+
+> npm: inquirer. (n.d.). Npm. https://www.npmjs.com/package/inquirer
+
+> Nodejs + TS CommonJS vs Module issue for Inquirer package. (n.d.). Stack Overflow. https://stackoverflow.com/questions/73537195/nodejs-ts-commonjs-vs-module-issue-for-inquirer-package
