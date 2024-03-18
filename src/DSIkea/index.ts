@@ -9,7 +9,10 @@ const furnitureManager = new FurnitureManager();
 const supplierManager = new SupplierManager();
 const customerManager = new CustomerManager();
 const stock = new Stock();
-// Función principal para mostrar el menú y manejar las opciones
+
+/**
+ * Función principal que muestra el menú principal y maneja las opciones.
+ */
 function mainMenu() {
     inquirer.prompt({
         type: 'list',
@@ -36,6 +39,9 @@ function mainMenu() {
     });
 }
 
+/**
+ * Función para gestionar las opciones relacionadas con los muebles.
+ */
 function manageFurniture() {
     inquirer.prompt({
         type: 'list',
@@ -99,6 +105,9 @@ function manageFurniture() {
     });
 }
 
+/**
+ * Función para gestionar las opciones relacionadas con los proveedores.
+ */
 function manageSuppliers() {
     inquirer.prompt({
         type: 'list',
@@ -151,6 +160,9 @@ function manageSuppliers() {
     });
 }
 
+/**
+ * Función para gestionar las opciones relacionadas con los clientes.
+ */
 function manageCustomers() {
     inquirer.prompt({
         type: 'list',

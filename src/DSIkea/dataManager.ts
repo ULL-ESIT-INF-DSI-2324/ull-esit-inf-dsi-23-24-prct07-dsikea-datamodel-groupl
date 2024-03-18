@@ -1,18 +1,27 @@
 import low, { LowdbSync } from 'lowdb';
 import FileSync from 'lowdb/adapters/FileSync.js';
 
+// Define el nombre del archivo de la base de datos
 const DB_FILE = 'db.json';
+
+// Crea un adaptador que utiliza el archivo JSON como almacenamiento
 const adapter = new FileSync<DatabaseSchema>(DB_FILE);
+
+// Crea una instancia de Lowdb y carga los datos del archivo JSON
 const db: LowdbSync<DatabaseSchema> = low(adapter);
 
-// Define la estructura de la base de datos
+/**
+ * Define la estructura de la base de datos.
+ */
 interface DatabaseSchema {
     muebles: Mueble[];
     proveedores: Proveedor[];
     clientes: Cliente[];
 }
 
-// Define las interfaces para los diferentes tipos de datos
+/**
+ * Define la estructura de un mueble.
+ */
 interface Mueble {
     id: string;
     nombre: string;
@@ -22,6 +31,9 @@ interface Mueble {
     precio: number;
 }
 
+/**
+ * Define la estructura de un proveedor.
+ */
 interface Proveedor {
     id: string;
     nombre: string;
@@ -29,6 +41,9 @@ interface Proveedor {
     direccion: string;
 }
 
+/**
+ * Define la estructura de un cliente.
+ */
 interface Cliente {
     id: string;
     nombre: string;

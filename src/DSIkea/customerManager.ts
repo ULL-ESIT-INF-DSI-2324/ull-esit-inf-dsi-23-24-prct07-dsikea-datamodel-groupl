@@ -1,13 +1,23 @@
 import { Customer, CustomerCollection } from './customer.js';
 
+/**
+ * Clase para gestionar clientes.
+ */
 export class CustomerManager {
     private customerCollection: CustomerCollection;
 
+    /**
+     * Crea una instancia de CustomerManager.
+     */
     constructor() {
         this.customerCollection = new CustomerCollection();
     }
 
-    generateUniqueId(): string{
+    /**
+     * Genera un ID único para clientes basado en un timestamp y un número aleatorio.
+     * @returns El ID único generado.
+     */
+    generateUniqueId(): string {
         // Generar un timestamp para asegurar que los IDs sean únicos
         const timestamp = new Date().getTime();
 
@@ -18,6 +28,11 @@ export class CustomerManager {
         return `${timestamp}${random}`;
     }
 
+    /**
+     * Busca un cliente por su ID.
+     * @param id El ID del cliente a buscar.
+     * @returns El cliente encontrado o null si no se encuentra.
+     */
     findCustomer(id: string): Customer | null {
         const index = this.customerCollection.findIndexById(id);
         if (index !== -1) {
@@ -27,21 +42,22 @@ export class CustomerManager {
         return null; // Cliente no encontrado
     }
 
-        /**
+    /**
      * Elimina un cliente de la colección.
      * @param id El ID del cliente a eliminar.
      * @returns True si se eliminó correctamente, False si no se encontró el cliente.
      */
-        deleteCustomer(id: string): boolean {
-            const index = this.customerCollection.findIndexById(id);
-            if (index !== -1) {
-                const customerList = this.customerCollection.getCustomers();
-                customerList.splice(index, 1);
-                return true;
-            }
-            return false; // Cliente no encontrado
+    deleteCustomer(id: string): boolean {
+        const index = this.customerCollection.findIndexById(id);
+        if (index !== -1) {
+            const customerList = this.customerCollection.getCustomers();
+            customerList.splice(index, 1);
+            return true;
         }
-        /**
+        return false; // Cliente no encontrado
+    }
+
+    /**
      * Actualiza un cliente existente en la colección.
      * @param id El ID del cliente a actualizar.
      * @param updatedCustomer El cliente actualizado.
@@ -57,13 +73,19 @@ export class CustomerManager {
         return false; // Cliente no encontrado
     }
 
-    addCustomer(customerData: { name: string, email: string }): void {
+    /**
+     * Agrega un nuevo cliente a la colección.
+     * @param customerData La información del cliente a agregar (nombre y correo electrónico).
+     */
+    addCustomer(customerData: { name: string; email: string }): void {
         const id = this.generateUniqueId();
         const newCustomer = new Customer(id, customerData.name, customerData.email, ''); // Crear una instancia de Customer con ID generado, nombre, correo electrónico y dirección vacía
-        console.log(id);
         this.customerCollection.addCustomer(newCustomer); // Agregar la nueva instancia de Customer a la colección
     }
-    // Implementa otras funciones para modificar, eliminar y buscar clientes
+
+    /**
+     * Lista todos los clientes registrados.
+     */
     listCustomers(): void {
         const customers = this.customerCollection.getCustomers();
         if (customers.length === 0) {
