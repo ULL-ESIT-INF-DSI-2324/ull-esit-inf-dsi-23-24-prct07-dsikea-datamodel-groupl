@@ -24,7 +24,8 @@ alu0101398495@ull.edu.es
 En esta práctica grupal se pretente crear un diseño orientado a objetos del modelo de datos de un sistema de información destinado a gestionar una tienda de muebles. Para ello usaremos los módulos *Inquirer Lowdb, los cuales nos permitirán gestionar la línea de comandos de forma intercativa y tener información almacenada de forma persistente.
 
 ## Configuración del entorno
-
+Para instalar Inquirer realizamos el comando `npm install --save-dev inquirer` y para instalar lowdb `npm install --save-dev lowdb`
+. Además deberemos tener la última version de Node.js instalada 
 
 ## `Furniture.ts`
 ```
@@ -943,5 +944,559 @@ Método listCustomers(): void:
 ```
 Este método obtiene la lista de todos los clientes en la colección y muestra su información por consola, incluyendo ID, nombre, correo electrónico y dirección.
 
+## `index.ts`
+```
+import inquirer from 'inquirer';
+import { FurnitureManager } from './furnitureManager.js';
+import { SupplierManager } from './supplierManager.js';
+import { CustomerManager } from './customerManager.js';
+import { Stock } from './stock.js';
+
+// Crear instancias de los managers
+const furnitureManager = new FurnitureManager();
+const supplierManager = new SupplierManager();
+const customerManager = new CustomerManager();
+const stock = new Stock();
+// Función principal para mostrar el menú y manejar las opciones
+function mainMenu() {
+    inquirer.prompt({
+        type: 'list',
+        name: 'option',
+        message: 'Seleccione una opción:',
+        choices: ['Gestionar muebles', 'Gestionar proveedores', 'Gestionar clientes', 'Salir']
+    }).then((answers) => {
+        const { option } = answers;
+
+        switch (option) {
+            case 'Gestionar muebles':
+                manageFurniture();
+                break;
+            case 'Gestionar proveedores':
+                manageSuppliers();
+                break;
+            case 'Gestionar clientes':
+                manageCustomers();
+                break;
+            case 'Salir':
+                console.log('¡Hasta luego!');
+                return;
+        }
+    });
+}
+
+function manageFurniture() {
+    inquirer.prompt({
+        type: 'list',
+        name: 'furnitureOption',
+        message: 'Seleccione una opción para gestionar muebles:',
+        choices: ['Agregar mueble', 'Actualizar mueble', 'Eliminar mueble', 'Buscar mueble', 'Listar muebles', 'Volver']
+    }).then((answers) => {
+        const { furnitureOption } = answers;
+
+        switch (furnitureOption) {
+            case 'Agregar mueble':
+                // Lógica para agregar un mueble
+                inquirer.prompt([
+                    { type: 'input', name: 'name', message: 'Nombre del mueble:' },
+                    { type: 'input', name: 'description', message: 'Descripción del mueble:' },
+                    { type: 'input', name: 'material', message: 'Material del mueble:' },
+                    { type: 'input', name: 'dimensions', message: 'Dimensiones del mueble:' },
+                    { type: 'input', name: 'price', message: 'Precio del mueble:' }
+                ]).then((newFurniture) => {
+                    furnitureManager.addFurniture(newFurniture);
+                    manageFurniture(); // Volver al menú de muebles
+                });
+                break;
+            case 'Actualizar mueble':
+                // Lógica para actualizar un mueble
+                inquirer.prompt([
+                    { type: 'input', name: 'id', message: 'ID del mueble a actualizar:' },
+                    { type: 'input', name: 'name', message: 'Nuevo nombre del mueble:' },
+                    { type: 'input', name: 'description', message: 'Nueva descripción del mueble:' },
+                    { type: 'input', name: 'material', message: 'Nuevo material del mueble:' },
+                    { type: 'input', name: 'dimensions', message: 'Nuevas dimensiones del mueble:' },
+                    { type: 'input', name: 'price', message: 'Nuevo precio del mueble:' }
+                ]).then((updatedFurniture) => {
+                    furnitureManager.updateFurniture(updatedFurniture.id, updatedFurniture);
+                    manageFurniture(); // Volver al menú de muebles
+                });
+                break;
+            case 'Eliminar mueble':
+                // Lógica para eliminar un mueble
+                inquirer.prompt({ type: 'input', name: 'id', message: 'ID del mueble a eliminar:' }).then((answer) => {
+                    furnitureManager.deleteFurniture(answer.id);
+                    manageFurniture(); // Volver al menú de muebles
+                });
+                break;
+            case 'Buscar mueble':
+                // Lógica para buscar un mueble
+                inquirer.prompt({ type: 'input', name: 'id', message: 'ID del mueble a buscar:' }).then((answer) => {
+                    furnitureManager.findFurnitureById(answer.id);
+                    manageFurniture(); // Volver al menú de muebles
+                });
+                break;
+            case 'Listar muebles':
+                // Lógica para listar todos los muebles
+                furnitureManager.getFurnitureList();
+                manageFurniture(); // Volver al menú de muebles
+                break;
+            case 'Volver':
+                mainMenu(); // Volver al menú principal
+                break;
+        }
+    });
+}
+
+function manageSuppliers() {
+    inquirer.prompt({
+        type: 'list',
+        name: 'supplierOption',
+        message: 'Seleccione una opción para gestionar proveedores:',
+        choices: ['Agregar proveedor', 'Actualizar proveedor', 'Eliminar proveedor', 'Buscar proveedor', 'Volver']
+    }).then((answers) => {
+        const { supplierOption } = answers;
+
+        switch (supplierOption) {
+            case 'Agregar proveedor':
+                // Lógica para agregar un proveedor
+                inquirer.prompt([
+                    { type: 'input', name: 'name', message: 'Nombre del proveedor:' },
+                    { type: 'input', name: 'contact', message: 'Contacto del proveedor:' }
+                ]).then((newSupplier) => {
+                    supplierManager.addSupplier(newSupplier);
+                    manageSuppliers(); // Volver al menú de proveedores
+                });
+                break;
+            case 'Actualizar proveedor':
+                // Lógica para actualizar un proveedor
+                inquirer.prompt([
+                    { type: 'input', name: 'id', message: 'ID del proveedor a actualizar:' },
+                    { type: 'input', name: 'name', message: 'Nuevo nombre del proveedor:' },
+                    { type: 'input', name: 'contact', message: 'Nuevo contacto del proveedor:' }
+                ]).then((updatedSupplier) => {
+                    supplierManager.updateSupplier(updatedSupplier.id, updatedSupplier);
+                    manageSuppliers(); // Volver al menú de proveedores
+                });
+                break;
+            case 'Eliminar proveedor':
+                // Lógica para eliminar un proveedor
+                inquirer.prompt({ type: 'input', name: 'id', message: 'ID del proveedor a eliminar:' }).then((answer) => {
+                    supplierManager.deleteSupplier(answer.id);
+                    manageSuppliers(); // Volver al menú de proveedores
+                });
+                break;
+            case 'Buscar proveedor':
+                // Lógica para buscar un proveedor
+                inquirer.prompt({ type: 'input', name: 'id', message: 'ID del proveedor a buscar:' }).then((answer) => {
+                    supplierManager.findSupplierById(answer.id);
+                    manageSuppliers(); // Volver al menú de proveedores
+                });
+                break;
+            case 'Volver':
+                mainMenu(); // Volver al menú principal
+                break;
+        }
+    });
+}
+
+function manageCustomers() {
+    inquirer.prompt({
+        type: 'list',
+        name: 'customerOption',
+        message: 'Seleccione una opción para gestionar clientes:',
+        choices: ['Agregar cliente', 'Actualizar cliente', 'Eliminar cliente', 'Buscar cliente', 'Listar clientes', 'Volver']
+    }).then((answers) => {
+        const { customerOption } = answers;
+
+        switch (customerOption) {
+            case 'Agregar cliente':
+                // Lógica para agregar un cliente
+                inquirer.prompt([
+                    { type: 'input', name: 'name', message: 'Nombre del cliente:' },
+                    { type: 'input', name: 'email', message: 'Correo electrónico del cliente:' }
+                ]).then((answers) => {
+                    customerManager.addCustomer(answers); // Llamar a la función addCustomer con la nueva instancia de Customer
+                    manageCustomers(); // Volver al menú de clientes
+                });
+                break;
+            case 'Actualizar cliente':
+                // Lógica para actualizar un cliente
+                inquirer.prompt([
+                    { type: 'input', name: 'id', message: 'ID del cliente a actualizar:' },
+                    { type: 'input', name: 'name', message: 'Nuevo nombre del cliente:' },
+                    { type: 'input', name: 'email', message: 'Nuevo correo electrónico del cliente:' }
+                ]).then((updatedCustomer) => {
+                    customerManager.updateCustomer(updatedCustomer.id, updatedCustomer);
+                    manageCustomers(); // Volver al menú de clientes
+                });
+                break;
+            case 'Eliminar cliente':
+                // Lógica para eliminar un cliente
+                inquirer.prompt({ type: 'input', name: 'id', message: 'ID del cliente a eliminar:' }).then((answer) => {
+                    customerManager.deleteCustomer(answer.id);
+                    manageCustomers(); // Volver al menú de clientes
+                });
+                break;
+            case 'Listar clientes':
+                //customerManager.listCustomers();
+                stock.listarClientes();
+                manageCustomers();
+                break;
+            case 'Buscar cliente':
+                // Lógica para buscar un cliente
+                inquirer.prompt({ type: 'input', name: 'id', message: 'ID del cliente a buscar:' }).then((answer) => {
+                    customerManager.findCustomer(answer.id);
+                    manageCustomers(); // Volver al menú de clientes
+                });
+                break;
+            case 'Volver':
+                mainMenu(); // Volver al menú principal
+                break;
+        }
+    });
+}
+
+// Llamar a la función principal para iniciar la aplicación
+mainMenu();
+
+```
+## Importación de Módulos
+Se importan los módulos necesarios para el funcionamiento de la aplicación. Estos incluyen:
+- `inquirer`: Un módulo que permite interactuar con el usuario a través de la línea de comandos, mostrando mensajes y opciones para que el usuario seleccione.
+- Los diferentes managers y modelos que se encargan de la gestión de los datos relacionados con muebles, proveedores y clientes.
+
+## Creación de Instancias de Managers
+Se instancian los managers y modelos necesarios para gestionar los datos de la aplicación. Estos incluyen el `FurnitureManager`, el `SupplierManager`, el `CustomerManager`, y el modelo `Stock`.
+
+## Función Principal `mainMenu()`
+Esta función es el punto de entrada de la aplicación. Presenta al usuario un menú principal con diferentes opciones, como gestionar muebles, proveedores, clientes o salir de la aplicación.
+Utiliza `inquirer.prompt()` para solicitar al usuario que elija una opción y ejecuta las acciones correspondientes según la opción seleccionada.
+
+## Funciones de Gestión Específicas
+Se definen funciones separadas para manejar las acciones específicas de cada tipo de entidad:
+- `manageFurniture()`: Gestiona las operaciones relacionadas con los muebles, como agregar, actualizar, eliminar, buscar y listar.
+- `manageSuppliers()`: Gestiona las operaciones relacionadas con los proveedores, con las mismas operaciones que en `manageFurniture()`.
+- `manageCustomers()`: Gestiona las operaciones relacionadas con los clientes, incluyendo agregar, actualizar, eliminar, buscar y listar.
+Estas funciones utilizan `inquirer.prompt()` para obtener información adicional del usuario y luego llaman a los métodos correspondientes en los managers para realizar las operaciones sobre los datos.
+
+## Lógica de Ejecución
+La lógica de ejecución se basa en la interacción con el usuario a través de los menús y la ejecución de las acciones seleccionadas. La aplicación continúa ejecutándose hasta que el usuario elige salir del programa.
+
+## Inicio de la Aplicación
+Finalmente, se llama a la función `mainMenu()` para iniciar la aplicación y presentar el menú principal al usuario, desde donde puede comenzar a interactuar con la aplicación.
+
+# `stock.ts`
+```
+import { Furniture, FurnitureCollection } from './furniture.js';
+import { Supplier, SupplierCollection } from './supplier.js';
+import { Customer, CustomerCollection } from './customer.js';
+import low from 'lowdb';
+import FileSync from 'lowdb/adapters/FileSync.js';
+
+export interface Transaccion {
+    fecha: Date;
+    tipo: 'compra' | 'venta' | 'devolucion' | 'manual'; // Agrega 'manual' a la unión de tipos
+    items: {
+        mueble: Furniture;
+        cantidad: number;
+    }[];
+}
+
+interface Informe {
+    rangoFechas: { inicio: Date; fin: Date };
+    tipo: 'stock' | 'ventas' | 'compras';
+}
+
+export class Stock {
+    private coleccionMuebles: FurnitureCollection;
+    private coleccionProveedores: SupplierCollection;
+    private coleccionClientes: CustomerCollection;
+    private transacciones: Transaccion[];
+
+    constructor() {
+        const adaptador = new FileSync('stock.json');
+        const db = low(adaptador);
+
+        this.coleccionMuebles = new FurnitureCollection();
+        this.coleccionProveedores = new SupplierCollection();
+        this.coleccionClientes = new CustomerCollection();
+        this.transacciones = db.get('transacciones').value() || [];
+
+        this.iniciarBaseDatos();
+    }
+
+    private iniciarBaseDatos() {
+    // Cargar datos iniciales de la base de datos desde el archivo JSON
+    const adaptador = new FileSync('stock.json');
+    const db = low(adaptador);
+
+    // Obtener datos de muebles, proveedores y clientes del archivo JSON
+    const muebles = db.get('muebles').value() || [];
+    const proveedores = db.get('proveedores').value() || [];
+    const clientes = db.get('clientes').value() || [];
+
+    // Cargar muebles
+    muebles.forEach((mueble: any) => {
+        const nuevoMueble = new Furniture(mueble.id, mueble.name, mueble.description, mueble.material, mueble.dimensions, mueble.price);
+        this.agregarMueble(nuevoMueble);
+    });
+
+    // Cargar proveedores
+    proveedores.forEach((proveedor: any) => {
+        const nuevoProveedor = new Supplier(proveedor.id, proveedor.name, proveedor.contact, proveedor.address);
+        this.agregarProveedor(nuevoProveedor);
+    });
+
+    // Cargar clientes
+    clientes.forEach((cliente: any) => {
+        const nuevoCliente = new Customer(cliente.id, cliente.name, cliente.email, cliente.address);
+        this.agregarCliente(nuevoCliente);
+    });
+    }
+
+    agregarMueble(mueble: Furniture): void {
+        this.coleccionMuebles.addFurniture(mueble);
+    }
+
+    agregarProveedor(proveedor: Supplier): void {
+        this.coleccionProveedores.addSupplier(proveedor);
+    }
+
+    agregarCliente(cliente: Customer): void {
+        this.coleccionClientes.addCustomer(cliente);
+    }
+
+    getColeccionClientes(){
+        return this.coleccionClientes;
+    }
+
+    registrarCompra(fecha: Date, items: { mueble: Furniture; cantidad: number }[]): void {
+        this.transacciones.push({ fecha, tipo: 'compra', items });
+    }
+
+    registrarVenta(fecha: Date, items: { mueble: Furniture; cantidad: number }[]): void {
+        this.transacciones.push({ fecha, tipo: 'venta', items });
+    }
+
+    listarClientes(): void {
+        const clientes = this.coleccionClientes.getCustomers();
+        if (clientes.length === 0) {
+            console.log('No hay clientes registrados.');
+        } else {
+            console.log('Lista de clientes:');
+            clientes.forEach(cliente => {
+                console.log(`ID: ${cliente.getId()}, Nombre: ${cliente.getName()}, Correo electrónico: ${cliente.getContact()}, Dirección: ${cliente.getAddress()}`);
+            });
+        }
+    }
+
+    listarMuebles(): void {
+        const muebles = this.coleccionMuebles.getFurnitureList();
+        if (muebles.length === 0) {
+            console.log('No hay muebles registrados.');
+        } else {
+            console.log('Lista de muebles:');
+            muebles.forEach(mueble => {
+                console.log(`ID: ${mueble.getId()}, Nombre: ${mueble.getName()}, Descripción: ${mueble.getDescription()}, Material: ${mueble.getMaterial()}, Dimensiones: ${mueble.getDimensions()}, Precio: ${mueble.getPrice()}`);
+            });
+        }
+    }
 
 
+    obtenerStock(mueble: Furniture): number {
+        const compras = this.transacciones.filter(
+            transaccion => transaccion.tipo === 'compra' && transaccion.items.some(item => item.mueble === mueble)
+        );
+        const ventas = this.transacciones.filter(
+            transaccion => transaccion.tipo === 'venta' && transaccion.items.some(item => item.mueble === mueble)
+        );
+        const stockCompras = compras.reduce((total, compra) => {
+            return total + compra.items.filter(item => item.mueble === mueble).reduce((subTotal, item) => subTotal + item.cantidad, 0);
+        }, 0);
+        const stockVentas = ventas.reduce((total, venta) => {
+            return total + venta.items.filter(item => item.mueble === mueble).reduce((subTotal, item) => subTotal + item.cantidad, 0);
+        }, 0);
+        return stockCompras - stockVentas;
+    }
+
+    obtenerInformeVentas(informe: Informe): number {
+        const ventas = this.transacciones.filter(
+            transaccion => transaccion.tipo === 'venta' && transaccion.fecha >= informe.rangoFechas.inicio && transaccion.fecha <= informe.rangoFechas.fin
+        );
+        const totalVentas = ventas.reduce((total, venta) => {
+            return total + venta.items.reduce((subtotal, item) => subtotal + item.cantidad, 0);
+        }, 0);
+        return totalVentas;
+    }
+
+    obtenerInformeCompras(informe: Informe): number {
+        const compras = this.transacciones.filter(
+            transaccion => transaccion.tipo === 'compra' && transaccion.fecha >= informe.rangoFechas.inicio && transaccion.fecha <= informe.rangoFechas.fin
+        );
+        const totalCompras = compras.reduce((total, compra) => {
+            return total + compra.items.reduce((subtotal, item) => subtotal + item.cantidad, 0);
+        }, 0);
+        return totalCompras;
+    }
+
+    obtenerInformeStock(mueble?: Furniture): number {
+        let stockTotal = 0;
+        if (mueble) {
+            stockTotal = this.obtenerStock(mueble);
+        }
+        // Puedes implementar lógica para obtener stock por categoría aquí si es necesario
+        return stockTotal;
+    }
+    
+
+    generarInformeStockMinimo(stockMinimo: number): Furniture[] {
+        const mueblesBajosStock: Furniture[] = [];
+        // Obtener la lista de muebles de la colección
+        const muebles = this.coleccionMuebles.getFurnitureList();
+        // Recorrer los muebles para verificar el stock
+        muebles.forEach(mueble => {
+            if (this.obtenerStock(mueble) <= stockMinimo) {
+                mueblesBajosStock.push(mueble);
+            }
+        });
+        return mueblesBajosStock;
+    }
+    
+
+    registrarDevolucion(fecha: Date, items: { mueble: Furniture; cantidad: number }[]): void {
+        this.transacciones.push({ fecha, tipo: 'devolucion', items });
+    }
+
+    obtenerInformeTransaccionesPorTipo(tipo: 'compra' | 'venta' | 'devolucion'): Transaccion[] {
+        return this.transacciones.filter(transaccion => transaccion.tipo === tipo);
+    }
+
+    actualizarStockManual(mueble: Furniture, cantidad: number): void {
+        const index = this.transacciones.findIndex(
+            transaccion => transaccion.tipo === 'manual' && transaccion.items.some(item => item.mueble === mueble)
+        );
+        if (index !== -1) {
+            this.transacciones[index].items.forEach(item => {
+                if (item.mueble === mueble) {
+                    item.cantidad += cantidad;
+                }
+            });
+        } else {
+            // Crear una nueva transacción de tipo 'manual' si no existe
+            const nuevaTransaccion: Transaccion = {
+                fecha: new Date(),
+                tipo: 'manual',
+                items: [{ mueble, cantidad }],
+            };
+            this.transacciones.push(nuevaTransaccion);
+        }
+    }
+}
+
+```
+## Importación de Módulos
+Se importan los módulos necesarios para el funcionamiento de la aplicación. Estos incluyen:
+- `Furniture` y `FurnitureCollection` del archivo `furniture.js`.
+- `Supplier` y `SupplierCollection` del archivo `supplier.js`.
+- `Customer` y `CustomerCollection` del archivo `customer.js`.
+- `low` y `FileSync` de la biblioteca `lowdb` para la gestión de una base de datos en formato JSON.
+
+## Definición de Interfaces
+Se define la interfaz `Transaccion` para representar una transacción, que incluye la fecha, el tipo y los items involucrados. Además, se define la interfaz `Informe` para representar un informe, que incluye un rango de fechas y el tipo de informe.
+
+## Clase `Stock`
+La clase `Stock` se encarga de gestionar el inventario y las transacciones de la tienda. Algunas de sus características y métodos más importantes son:
+- Propiedades privadas que almacenan colecciones de muebles, proveedores, clientes y transacciones.
+- Constructor que inicializa las colecciones de datos y carga datos iniciales desde un archivo JSON.
+- Métodos para agregar muebles, proveedores y clientes a las respectivas colecciones.
+- Métodos para registrar compras, ventas, devoluciones y actualizaciones manuales de stock.
+- Métodos para generar informes sobre ventas, compras, stock y transacciones por tipo.
+- Métodos auxiliares para obtener información sobre el stock y generar informes de stock mínimo.
+- Métodos para listar clientes y muebles.
+
+## Inicio de la Aplicación
+La clase `Stock` se utiliza como punto de entrada para la aplicación. Al instanciar esta clase, se carga la base de datos y se inicializan las colecciones de datos. Luego, se pueden llamar a los métodos de esta clase para realizar operaciones de gestión de inventario y obtener informes.
+
+Esta descripción proporciona una visión general del código y explica cómo funciona cada parte de la clase `Stock`.
+
+# `dataManager.ts`
+```
+import low, { LowdbSync } from 'lowdb';
+import FileSync from 'lowdb/adapters/FileSync.js';
+
+const DB_FILE = 'db.json';
+const adapter = new FileSync<DatabaseSchema>(DB_FILE);
+const db: LowdbSync<DatabaseSchema> = low(adapter);
+
+// Define la estructura de la base de datos
+interface DatabaseSchema {
+    muebles: Mueble[];
+    proveedores: Proveedor[];
+    clientes: Cliente[];
+}
+
+// Define las interfaces para los diferentes tipos de datos
+interface Mueble {
+    id: string;
+    nombre: string;
+    descripcion: string;
+    material: string;
+    dimensiones: string;
+    precio: number;
+}
+
+interface Proveedor {
+    id: string;
+    nombre: string;
+    contacto: string;
+    direccion: string;
+}
+
+interface Cliente {
+    id: string;
+    nombre: string;
+    contacto: string;
+    direccion: string;
+}
+
+// Inicializa la base de datos con una estructura inicial si el archivo no existe
+const defaultValue: DatabaseSchema = {
+    muebles: [],
+    proveedores: [],
+    clientes: []
+};
+await db.defaults(defaultValue).write();
+
+// Exporta la instancia de la base de datos para usarla en otros módulos
+export default db;
+
+```
+## Importación de Módulos
+Se importan los módulos necesarios para la gestión de la base de datos utilizando `lowdb`. Estos incluyen:
+- `low` y `LowdbSync` de la biblioteca `lowdb` para la gestión de la base de datos.
+- `FileSync` de `lowdb/adapters/FileSync.js` para la sincronización de archivos.
+
+## Configuración de la Base de Datos
+Se define la constante `DB_FILE` que contiene la ruta del archivo de la base de datos. Luego, se crea una instancia del adaptador `FileSync` para el archivo de la base de datos especificado.
+
+## Definición de la Estructura de la Base de Datos
+Se define la interfaz `DatabaseSchema` que especifica la estructura de la base de datos, incluyendo las colecciones de `muebles`, `proveedores` y `clientes`. Además, se definen las interfaces para los diferentes tipos de datos que estarán almacenados en la base de datos, como `Mueble`, `Proveedor` y `Cliente`.
+
+## Inicialización de la Base de Datos
+Se inicializa la base de datos utilizando el adaptador y la estructura de la base de datos definida anteriormente. Si el archivo de la base de datos no existe, se crea con una estructura inicial definida por `defaultValue`, que contiene colecciones vacías de `muebles`, `proveedores` y `clientes`.
+
+## Exportación de la Instancia de la Base de Datos
+Finalmente, se exporta la instancia de la base de datos para que pueda ser utilizada en otros módulos de la aplicación.
+
+Esta descripción proporciona una visión general del código y explica cómo se configura y utiliza la base de datos utilizando `lowdb`.
+
+# Conclusion
+
+- Aprendizaje Práctico:
+La simulación de la gestión de una tienda de muebles proporciona una experiencia práctica invaluable en el desarrollo de software. Al interactuar con los códigos proporcionados, se adquieren habilidades en la implementación de sistemas de gestión de inventario, clientes y proveedores.
+
+- Conocimiento de Herramientas:
+El uso de herramientas como lowdb para la gestión de bases de datos permite familiarizarse con tecnologías modernas y ampliamente utilizadas en el desarrollo de aplicaciones web y sistemas de información.
+
+- Entendimiento del Proceso Comercial:
+Al simular la gestión de una tienda de muebles, se obtiene una comprensión más profunda del proceso comercial involucrado, incluyendo la interacción con proveedores, la gestión de inventario y la atención al cliente.
